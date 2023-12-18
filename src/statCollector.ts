@@ -53,6 +53,48 @@ async function reportWorkflowMetrics(): Promise<string> {
   const { networkReadX, networkWriteX } = await getNetworkStats()
   const { diskReadX, diskWriteX } = await getDiskStats()
 
+  core.summary.addRaw(
+    `Average CPU User Load: ${
+      userLoadX.reduce((a, b) => a + b.y, 0) / userLoadX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average CPU System Load: ${
+      systemLoadX.reduce((a, b) => a + b.y, 0) / systemLoadX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Memory Active: ${
+      activeMemoryX.reduce((a, b) => a + b.y, 0) / activeMemoryX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Memory Available: ${
+      availableMemoryX.reduce((a, b) => a + b.y, 0) / availableMemoryX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Network Read: ${
+      networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Network Write: ${
+      networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Disk Read: ${
+      diskReadX.reduce((a, b) => a + b.y, 0) / diskReadX.length
+    }`
+  )
+  core.summary.addRaw(
+    `Average Disk Write: ${
+      diskWriteX.reduce((a, b) => a + b.y, 0) / diskWriteX.length
+    }`
+  )
+  await core.summary.write()
+
   const cpuLoad =
     userLoadX && userLoadX.length && systemLoadX && systemLoadX.length
       ? await getStackedAreaGraph({
@@ -194,7 +236,7 @@ async function getCPUStats(): Promise<ProcessedCPUStats> {
     logger.debug(`Got CPU stats: ${JSON.stringify(response.data)}`)
   }
 
-  response.data.forEach((element: CPUStats) => {
+  for (const element of response.data) {
     userLoadX.push({
       x: element.time,
       y: element.userLoad && element.userLoad > 0 ? element.userLoad : 0
@@ -204,7 +246,7 @@ async function getCPUStats(): Promise<ProcessedCPUStats> {
       x: element.time,
       y: element.systemLoad && element.systemLoad > 0 ? element.systemLoad : 0
     })
-  })
+  }
 
   return { userLoadX, systemLoadX }
 }
@@ -221,7 +263,7 @@ async function getMemoryStats(): Promise<ProcessedMemoryStats> {
     logger.debug(`Got memory stats: ${JSON.stringify(response.data)}`)
   }
 
-  response.data.forEach((element: MemoryStats) => {
+  for (const element of response.data) {
     activeMemoryX.push({
       x: element.time,
       y:
@@ -237,7 +279,7 @@ async function getMemoryStats(): Promise<ProcessedMemoryStats> {
           ? element.availableMemoryMb
           : 0
     })
-  })
+  }
 
   return { activeMemoryX, availableMemoryX }
 }
@@ -254,7 +296,7 @@ async function getNetworkStats(): Promise<ProcessedNetworkStats> {
     logger.debug(`Got network stats: ${JSON.stringify(response.data)}`)
   }
 
-  response.data.forEach((element: NetworkStats) => {
+  for (const element of response.data) {
     networkReadX.push({
       x: element.time,
       y: element.rxMb && element.rxMb > 0 ? element.rxMb : 0
@@ -264,7 +306,7 @@ async function getNetworkStats(): Promise<ProcessedNetworkStats> {
       x: element.time,
       y: element.txMb && element.txMb > 0 ? element.txMb : 0
     })
-  })
+  }
 
   return { networkReadX, networkWriteX }
 }
@@ -279,7 +321,7 @@ async function getDiskStats(): Promise<ProcessedDiskStats> {
     logger.debug(`Got disk stats: ${JSON.stringify(response.data)}`)
   }
 
-  response.data.forEach((element: DiskStats) => {
+  for (const element of response.data) {
     diskReadX.push({
       x: element.time,
       y: element.rxMb && element.rxMb > 0 ? element.rxMb : 0
@@ -289,7 +331,7 @@ async function getDiskStats(): Promise<ProcessedDiskStats> {
       x: element.time,
       y: element.wxMb && element.wxMb > 0 ? element.wxMb : 0
     })
-  })
+  }
 
   return { diskReadX, diskWriteX }
 }
