@@ -31693,14 +31693,14 @@ function reportWorkflowMetrics() {
         const { activeMemoryX, availableMemoryX } = yield getMemoryStats();
         const { networkReadX, networkWriteX } = yield getNetworkStats();
         const { diskReadX, diskWriteX } = yield getDiskStats();
-        core.summary.addRaw(`Average CPU User Load: ${userLoadX.reduce((a, b) => a + b.y, 0) / userLoadX.length}`);
-        core.summary.addRaw(`Average CPU System Load: ${systemLoadX.reduce((a, b) => a + b.y, 0) / systemLoadX.length}`);
-        core.summary.addRaw(`Average Memory Active: ${activeMemoryX.reduce((a, b) => a + b.y, 0) / activeMemoryX.length}`);
-        core.summary.addRaw(`Average Memory Available: ${availableMemoryX.reduce((a, b) => a + b.y, 0) / availableMemoryX.length}`);
-        core.summary.addRaw(`Average Network Read: ${networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length}`);
-        core.summary.addRaw(`Average Network Write: ${networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length}`);
-        core.summary.addRaw(`Average Disk Read: ${diskReadX.reduce((a, b) => a + b.y, 0) / diskReadX.length}`);
-        core.summary.addRaw(`Average Disk Write: ${diskWriteX.reduce((a, b) => a + b.y, 0) / diskWriteX.length}`);
+        core.summary.addRaw(`Average CPU User Load: ${userLoadX.reduce((a, b) => a + b.y, 0) / userLoadX.length}\n`);
+        core.summary.addRaw(`Average CPU System Load: ${systemLoadX.reduce((a, b) => a + b.y, 0) / systemLoadX.length}\n`);
+        core.summary.addRaw(`Average Memory Active: ${activeMemoryX.reduce((a, b) => a + b.y, 0) / activeMemoryX.length}\n`);
+        core.summary.addRaw(`Average Memory Available: ${availableMemoryX.reduce((a, b) => a + b.y, 0) / availableMemoryX.length}\n`);
+        core.summary.addRaw(`Average Network Read: ${networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length}\n`);
+        core.summary.addRaw(`Average Network Write: ${networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length}\n`);
+        core.summary.addRaw(`Average Disk Read: ${diskReadX.reduce((a, b) => a + b.y, 0) / diskReadX.length}\n`);
+        core.summary.addRaw(`Average Disk Write: ${diskWriteX.reduce((a, b) => a + b.y, 0) / diskWriteX.length}\n`);
         yield core.summary.write();
         const cpuLoad = userLoadX && userLoadX.length && systemLoadX && systemLoadX.length
             ? yield getStackedAreaGraph({
