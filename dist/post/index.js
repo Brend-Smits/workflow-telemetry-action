@@ -31693,6 +31693,15 @@ function reportWorkflowMetrics() {
         const { activeMemoryX, availableMemoryX } = yield getMemoryStats();
         const { networkReadX, networkWriteX } = yield getNetworkStats();
         const { diskReadX, diskWriteX } = yield getDiskStats();
+        core.summary.addRaw(`Average CPU User Load: ${userLoadX.reduce((a, b) => a + b.y, 0) / userLoadX.length}`);
+        core.summary.addRaw(`Average CPU System Load: ${systemLoadX.reduce((a, b) => a + b.y, 0) / systemLoadX.length}`);
+        core.summary.addRaw(`Average Memory Active: ${activeMemoryX.reduce((a, b) => a + b.y, 0) / activeMemoryX.length}`);
+        core.summary.addRaw(`Average Memory Available: ${availableMemoryX.reduce((a, b) => a + b.y, 0) / availableMemoryX.length}`);
+        core.summary.addRaw(`Average Network Read: ${networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length}`);
+        core.summary.addRaw(`Average Network Write: ${networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length}`);
+        core.summary.addRaw(`Average Disk Read: ${diskReadX.reduce((a, b) => a + b.y, 0) / diskReadX.length}`);
+        core.summary.addRaw(`Average Disk Write: ${diskWriteX.reduce((a, b) => a + b.y, 0) / diskWriteX.length}`);
+        yield core.summary.write();
         const cpuLoad = userLoadX && userLoadX.length && systemLoadX && systemLoadX.length
             ? yield getStackedAreaGraph({
                 label: 'CPU Load (%)',
@@ -31804,7 +31813,7 @@ function getCPUStats() {
         if (logger.isDebugEnabled()) {
             logger.debug(`Got CPU stats: ${JSON.stringify(response.data)}`);
         }
-        response.data.forEach((element) => {
+        for (const element of response.data) {
             userLoadX.push({
                 x: element.time,
                 y: element.userLoad && element.userLoad > 0 ? element.userLoad : 0
@@ -31813,7 +31822,7 @@ function getCPUStats() {
                 x: element.time,
                 y: element.systemLoad && element.systemLoad > 0 ? element.systemLoad : 0
             });
-        });
+        }
         return { userLoadX, systemLoadX };
     });
 }
@@ -31826,7 +31835,7 @@ function getMemoryStats() {
         if (logger.isDebugEnabled()) {
             logger.debug(`Got memory stats: ${JSON.stringify(response.data)}`);
         }
-        response.data.forEach((element) => {
+        for (const element of response.data) {
             activeMemoryX.push({
                 x: element.time,
                 y: element.activeMemoryMb && element.activeMemoryMb > 0
@@ -31839,7 +31848,7 @@ function getMemoryStats() {
                     ? element.availableMemoryMb
                     : 0
             });
-        });
+        }
         return { activeMemoryX, availableMemoryX };
     });
 }
@@ -31852,7 +31861,7 @@ function getNetworkStats() {
         if (logger.isDebugEnabled()) {
             logger.debug(`Got network stats: ${JSON.stringify(response.data)}`);
         }
-        response.data.forEach((element) => {
+        for (const element of response.data) {
             networkReadX.push({
                 x: element.time,
                 y: element.rxMb && element.rxMb > 0 ? element.rxMb : 0
@@ -31861,7 +31870,7 @@ function getNetworkStats() {
                 x: element.time,
                 y: element.txMb && element.txMb > 0 ? element.txMb : 0
             });
-        });
+        }
         return { networkReadX, networkWriteX };
     });
 }
@@ -31874,7 +31883,7 @@ function getDiskStats() {
         if (logger.isDebugEnabled()) {
             logger.debug(`Got disk stats: ${JSON.stringify(response.data)}`);
         }
-        response.data.forEach((element) => {
+        for (const element of response.data) {
             diskReadX.push({
                 x: element.time,
                 y: element.rxMb && element.rxMb > 0 ? element.rxMb : 0
@@ -31883,7 +31892,7 @@ function getDiskStats() {
                 x: element.time,
                 y: element.wxMb && element.wxMb > 0 ? element.wxMb : 0
             });
-        });
+        }
         return { diskReadX, diskWriteX };
     });
 }
