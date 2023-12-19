@@ -3,12 +3,8 @@ import path from 'path'
 import axios from 'axios'
 import * as core from '@actions/core'
 import {
-  CPUStats,
-  DiskStats,
   GraphResponse,
   LineGraphOptions,
-  MemoryStats,
-  NetworkStats,
   ProcessedCPUStats,
   ProcessedDiskStats,
   ProcessedMemoryStats,
@@ -74,6 +70,23 @@ async function reportWorkflowMetrics(): Promise<string> {
     }\n`
   )
   core.summary.addRaw(
+    `Max Memory Active: ${
+      activeMemoryX.reduce((a, b) => Math.max(a, b.y), 0) / 1024
+    } GB\n`
+  )
+  // Peak Network Read in Mbps
+  core.summary.addRaw(
+    `Peak Network Read: ${
+      networkReadX.reduce((a, b) => Math.max(a, b.y), 0) * 8
+    } Mbps\n`
+  )
+  // Peak Network Write in Mbps
+  core.summary.addRaw(
+    `Peak Network Write: ${
+      networkWriteX.reduce((a, b) => Math.max(a, b.y), 0) * 8
+    } Mbps\n`
+  )
+  core.summary.addRaw(
     `Average Network Read: ${
       networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length
     }\n`
@@ -82,6 +95,18 @@ async function reportWorkflowMetrics(): Promise<string> {
     `Average Network Write: ${
       networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length
     }\n`
+  )
+  // Peak Disk Read in Mbps
+  core.summary.addRaw(
+    `Peak Disk Read: ${
+      diskReadX.reduce((a, b) => Math.max(a, b.y), 0) * 8
+    } Mbps\n`
+  )
+  // Peak Disk Write in Mbps
+  core.summary.addRaw(
+    `Peak Disk Write: ${
+      diskWriteX.reduce((a, b) => Math.max(a, b.y), 0) * 8
+    } Mbps\n`
   )
   core.summary.addRaw(
     `Average Disk Read: ${

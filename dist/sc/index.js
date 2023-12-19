@@ -5812,8 +5812,17 @@ function reportWorkflowMetrics() {
         core.summary.addRaw(`Average CPU System Load: ${systemLoadX.reduce((a, b) => a + b.y, 0) / systemLoadX.length}\n`);
         core.summary.addRaw(`Average Memory Active: ${activeMemoryX.reduce((a, b) => a + b.y, 0) / activeMemoryX.length}\n`);
         core.summary.addRaw(`Average Memory Available: ${availableMemoryX.reduce((a, b) => a + b.y, 0) / availableMemoryX.length}\n`);
+        core.summary.addRaw(`Max Memory Active: ${activeMemoryX.reduce((a, b) => Math.max(a, b.y), 0) / 1024} GB\n`);
+        // Peak Network Read in Mbps
+        core.summary.addRaw(`Peak Network Read: ${networkReadX.reduce((a, b) => Math.max(a, b.y), 0) * 8} Mbps\n`);
+        // Peak Network Write in Mbps
+        core.summary.addRaw(`Peak Network Write: ${networkWriteX.reduce((a, b) => Math.max(a, b.y), 0) * 8} Mbps\n`);
         core.summary.addRaw(`Average Network Read: ${networkReadX.reduce((a, b) => a + b.y, 0) / networkReadX.length}\n`);
         core.summary.addRaw(`Average Network Write: ${networkWriteX.reduce((a, b) => a + b.y, 0) / networkWriteX.length}\n`);
+        // Peak Disk Read in Mbps
+        core.summary.addRaw(`Peak Disk Read: ${diskReadX.reduce((a, b) => Math.max(a, b.y), 0) * 8} Mbps\n`);
+        // Peak Disk Write in Mbps
+        core.summary.addRaw(`Peak Disk Write: ${diskWriteX.reduce((a, b) => Math.max(a, b.y), 0) * 8} Mbps\n`);
         core.summary.addRaw(`Average Disk Read: ${diskReadX.reduce((a, b) => a + b.y, 0) / diskReadX.length}\n`);
         core.summary.addRaw(`Average Disk Write: ${diskWriteX.reduce((a, b) => a + b.y, 0) / diskWriteX.length}\n`);
         yield core.summary.write();
